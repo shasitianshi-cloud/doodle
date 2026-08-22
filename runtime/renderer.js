@@ -1,14 +1,19 @@
-// Doodle Render Capability - renderer boundary
-// Phase 1 implementation placeholder.
-// This module owns SVG composition/render execution only.
+// Doodle Render Capability - renderer backend boundary.
+// Owns rendering only. No Project, Beat, or workflow logic.
 
-export async function renderScene(scene) {
+export async function renderScene(scene, outputPath = 'output.mp4') {
   if (!scene || !Array.isArray(scene.elements)) {
     throw new Error('Invalid scene input');
   }
 
+  const duration = Number(scene.duration || 0);
+
+  // SVG/Rough.js/FFmpeg execution is attached here.
+  // The boundary remains stable for remote execution.
   return {
-    status: 'accepted',
-    scene_id: scene.scene_id || null
+    status: 'backend-pending',
+    output: outputPath,
+    duration,
+    hash: null
   };
 }
