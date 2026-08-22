@@ -1,0 +1,39 @@
+{
+  "capability": "doodle-render",
+  "version": "experimental-v1",
+  "remote_runtime": "github-actions",
+  "status": "PASS",
+  "accepted": true,
+  "workflow": ".github/workflows/remote-render.yml",
+  "workflow_run_id": 32568688378,
+  "workflow_job_id": 97020944403,
+  "artifact_id": 9474750523,
+  "artifact_name": "doodle-smoke-4cd977b42c37ccb5fdfdcca1788b7da61b515590",
+  "artifact_archive_digest": "sha256:3f865ac5ab4b388fd2e924b9801d06a4881b3655ef83faa36b8a18d174682563",
+  "smoke": {
+    "status": "PASS",
+    "input_sha256": "1da13fa146169b5ffc06582644901d1b1adc741ee1e8fc617488eed6d1ff03fc",
+    "output_sha256": "2c12e8b56f36105de3251fcad513fc9d5f7b73362fde31445d9db0d0c608cca9",
+    "output_duration": 2.5,
+    "output_size_bytes": 13709,
+    "capability_version": "experimental-v1",
+    "asset_ids": ["factory"],
+    "asset_sha256": {
+      "factory": "0bf52f680ddb44a7b76a2a6281c54fa477a19eeeb9935d960edf8b4db3646e32"
+    },
+    "font_sha256": "b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a",
+    "evidence_validation_result": "PASS",
+    "external_ffprobe_duration": 2.5,
+    "visual_frame_checked": true
+  },
+  "frozen_contract_preserved": {
+    "entry": "runtime.js",
+    "schema": "canvas+background+seed+objects[]",
+    "cli_validate": "node runtime.js validate <scene.json>",
+    "cli_render": "node runtime.js render <scene.json> --output <file.mp4>",
+    "cli_list_assets": "node runtime.js list-assets",
+    "project_logic_added": false,
+    "scene_translation_added": false
+  },
+  "notes": "Acceptance proves GitHub-hosted execution can materialize the exact pinned font and selected frozen asset, validate the canonical scene, generate H.264 MP4, probe duration, close hashes/evidence, and upload the artifact without executing Doodle rendering on the VPS. Cross-host MP4 byte identity with the original VPS runtime is not asserted."
+}
