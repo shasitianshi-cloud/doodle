@@ -1,0 +1,105 @@
+name: doodle-remote-render
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('doodle-{0}', inputs.request_id) || format('doodle-smoke-{0}', github.sha) }}
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Unique caller request ID
+        required: true
+        type: string
+      scene_b64:
+        description: Base64 of exact frozen scene JSON bytes
+        required: true
+        type: string
+      request_sha256:
+        description: SHA256 of exact frozen scene JSON bytes
+        required: true
+        type: string
+      artifact_name:
+        description: Optional logical output name
+        required: false
+        type: string
+      caller_run_id:
+        description: Optional upstream Run ID for correlation
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      REQUEST_ID: ${{ github.event_name == 'workflow_dispatch' && inputs.request_id || format('smoke-{0}', github.sha) }}
+      CALLER_RUN_ID: ${{ github.event_name == 'workflow_dispatch' && inputs.caller_run_id || 'ci-smoke' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install frozen dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare request
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            printf '%s' '${{ inputs.scene_b64 }}' | base64 --decode > input.json
+            actual="$(sha256sum input.json | awk '{print $1}')"
+            test "$actual" = "${{ inputs.request_sha256 }}"
+          else
+            cp probes/remote-smoke.json input.json
+          fi
+          cp input.json request.json
+
+      - name: Materialize exact frozen font
+        run: node scripts/materialize-font.mjs
+
+      - name: Materialize and verify selected SVG assets
+        run: node scripts/materialize-assets.mjs input.json
+
+      - name: Validate canonical scene
+        run: node runtime.js validate input.json
+
+      - name: Render canonical MP4
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          node runtime.js render input.json --output out/output.mp4 | tee out/evidence.json
+          cp input.json out/request.json
+
+      - name: Verify Evidence closure
+        run: node scripts/verify-evidence.mjs input.json out/output.mp4 out/evidence.json out/result.json
+
+      - name: Attach correlation metadata
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = 'out/result.json';
+          const r = JSON.parse(fs.readFileSync(p, 'utf8'));
+          r.request_id = process.env.REQUEST_ID;
+          r.caller_run_id = process.env.CALLER_RUN_ID;
+          r.artifact_name = process.env.ARTIFACT_NAME || null;
+          fs.writeFileSync(p, JSON.stringify(r, null, 2));
+          NODE
+        env:
+          ARTIFACT_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.artifact_name || 'remote-smoke' }}
+
+      - name: Upload verified artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: doodle-${{ env.REQUEST_ID }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 7

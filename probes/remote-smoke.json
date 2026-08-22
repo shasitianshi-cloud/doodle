@@ -1,0 +1,56 @@
+{
+  "canvas": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "duration": 2.5
+  },
+  "background": {
+    "type": "solid",
+    "value": "#FAF8F2"
+  },
+  "seed": 4242,
+  "objects": [
+    {
+      "id": "factory",
+      "type": "ICON",
+      "x": 120,
+      "y": 220,
+      "start": 0.1,
+      "duration": 0.8,
+      "animation": "WRITE_OR_REVEAL",
+      "asset_id": "factory",
+      "width": 150,
+      "height": 150
+    },
+    {
+      "id": "arrow",
+      "type": "ARROW",
+      "x": 0,
+      "y": 0,
+      "start": 0.6,
+      "duration": 0.8,
+      "animation": "DRAW",
+      "from": [
+        340,
+        295
+      ],
+      "to": [
+        610,
+        295
+      ]
+    },
+    {
+      "id": "text",
+      "type": "TEXT",
+      "x": 660,
+      "y": 315,
+      "start": 1.1,
+      "duration": 0.9,
+      "animation": "WRITE_OR_REVEAL",
+      "text": "远端渲染验收",
+      "font_size": 54,
+      "align": "left"
+    }
+  ]
+}

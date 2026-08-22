@@ -1,15 +1,19 @@
 {
-  "name": "doodle-render-capability",
+  "name": "@codex/doodle-render-experimental-v1-remote",
   "version": "0.1.0",
-  "type": "module",
+  "private": true,
+  "type": "commonjs",
+  "main": "runtime.js",
   "scripts": {
-    "validate": "node runtime/validate.js",
-    "render": "node runtime/render.js"
+    "validate": "node runtime.js validate probes/remote-smoke.json",
+    "render:smoke": "node runtime.js render probes/remote-smoke.json --output out/remote-smoke.mp4",
+    "list-assets": "node runtime.js list-assets"
   },
   "dependencies": {
-    "ajv": "^8.17.1",
-    "ffmpeg-static": "^5.2.0",
-    "roughjs": "^4.6.6",
-    "svgdom": "^0.1.17"
+    "@resvg/resvg-js": "2.6.2",
+    "ajv": "8.17.1",
+    "ffmpeg-static": "5.2.0",
+    "ffprobe-static": "3.1.0",
+    "roughjs": "4.6.6"
   }
 }
