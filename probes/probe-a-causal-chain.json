@@ -1,0 +1,17 @@
+{
+  "scene_id": "probe-a-causal-chain",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "duration": 10,
+  "elements": [
+    {
+      "type": "svg",
+      "asset": "people/person.svg",
+      "x": 300,
+      "y": 400,
+      "scale": 1,
+      "animation": "draw"
+    }
+  ]
+}
