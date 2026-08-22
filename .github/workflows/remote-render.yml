@@ -4,6 +4,8 @@ run-name: ${{ github.event_name == 'workflow_dispatch' && format('doodle-{0}', i
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       request_id:
