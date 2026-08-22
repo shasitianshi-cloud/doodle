@@ -1,1 +1,2 @@
 remote GitHub Actions acceptance trigger
+retry=1
