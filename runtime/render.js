@@ -5,7 +5,9 @@
 // Rendering backend will be attached after smoke validation.
 
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import { validateScene } from './validate.js';
+import { createEvidence } from './evidence.js';
 
 const input = process.argv[2];
 
@@ -22,8 +24,15 @@ if (!result.valid) {
   process.exit(1);
 }
 
+const sceneHash = crypto
+  .createHash('sha256')
+  .update(JSON.stringify(scene))
+  .digest('hex');
+
 console.log(JSON.stringify({
   status: 'accepted',
   capability: 'doodle-render',
-  stage: 'runtime-skeleton'
-}));
+  stage: 'runtime-skeleton',
+  scene_hash: sceneHash,
+  evidence: createEvidence({ scene_hash: sceneHash })
+}, null, 2));
